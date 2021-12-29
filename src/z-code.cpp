@@ -16,24 +16,6 @@
 //Headers
 #include "mainpage.h"
 
-#define USE_UI_CONTROL 0
-
-#if USE_UI_CONTROL
-#include <MD_UISwitch.h>
-#endif
-
-#define DEBUG 0
-
-#if DEBUG
-#define PRINT(s, x) { Serial.print(F(s)); Serial.print(x); }
-#define PRINTS(x) Serial.print(F(x))
-#define PRINTX(x) Serial.println(x, HEX)
-#else
-#define PRINT(s, x)
-#define PRINTS(x)
-#define PRINTX(x)
-#endif
-
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
 #define MAX_DEVICES 4
 #define CLK_PIN   18
