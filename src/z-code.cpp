@@ -36,8 +36,8 @@ uint16_t scrollPause = 0; // in milliseconds
 const MD_MAX72XX::fontType_t *pFont = myNumbers;
 
 
-const char* ssid = "Shantimaster";
-const char* password = "kirikiri";
+const char* ssid = "YOUR SSID";
+const char* password = "YOUR WIFI PASS";
 
 WebServer server(80);
 WiFiMulti wifiMulti;
