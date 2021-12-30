@@ -176,8 +176,8 @@ void loop()
 void beepOk(){
   ledcAttachPin(BUZZER, 0);
   ledcWriteTone(0, 880);
-  delay(200);
-  ledcWriteTone(0, 1661);
+  delay(100);
+  ledcWriteTone(0, 440);
   delay(200);
   ledcDetachPin(BUZZER);
 }
