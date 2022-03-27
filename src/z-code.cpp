@@ -1,6 +1,6 @@
+#include "Arduino.h"
 #include <Wire.h>
 #include <PxMatrix.h>
-#include "Arduino.h"
 #include "Time.h"
 #include <WiFi.h>
 #include <WiFiClient.h>
@@ -20,7 +20,7 @@
 #define MAX_DEVICES 4
 #define CLK_PIN   18
 #define DATA_PIN  23
-#define CS_PIN    5
+#define CS_PIN    5 //15
 
 #define PUSHBUTTON 34
 #define BUZZER 13
@@ -79,14 +79,14 @@ void setup()
   
   //Eeprom
   if (!EEPROM.begin(20)) {
-    Serial.println("Failed to initialise EEPROM");
-    Serial.println("Restarting...");
+    //Serial.println("Failed to initialise EEPROM");
+    //Serial.println("Restarting...");
     delay(1000);
     ESP.restart();
   }
   // data from eeprom
   readEeprom();
-  Serial.println("Eeprom ready"); 
+  //Serial.println("Eeprom ready"); 
   
   // display  
   P.begin();
@@ -98,7 +98,7 @@ void setup()
   wifiMulti.addAP(ssid, password);
   while (wifiMulti.run()!= WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    //Serial.print(".");
   }
    
   //Home page. Contents of 'page' is in mainpage.h
@@ -108,13 +108,13 @@ void setup()
    //POST data handler
   server.on("/setAlarm", HTTP_POST, dataHandler);
   server.begin();  
-  Serial.println("HTTP server started");
+  //Serial.println("HTTP server started");
   
-  Serial.println("Reporting wifi values");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: \n");
-  Serial.println(ipToString()); 
+  //Serial.println("Reporting wifi values");
+  //Serial.print("Connected to ");
+  //Serial.println(ssid);
+  //Serial.print("IP address: \n");
+  //Serial.println(ipToString()); 
   
   showIp();
   setClock(); // reset time  
@@ -175,9 +175,9 @@ void loop()
 
 void beepOk(){
   ledcAttachPin(BUZZER, 0);
-  ledcWriteTone(0, 880);
-  delay(200);
   ledcWriteTone(0, 1661);
+  delay(200);
+  ledcWriteTone(0, 880);
   delay(200);
   ledcDetachPin(BUZZER);
 }
@@ -185,13 +185,13 @@ void beepOk(){
 void beepAlarm(){
   ledcAttachPin(BUZZER, 0);
   ledcWriteTone(0, 880);
-  delay(400);
+  delay(200);
   ledcWriteTone(0, 1661);
-  delay(400);
+  delay(200);
   ledcWriteTone(0, 2489);
-  delay(400);
+  delay(200);
   ledcWriteTone(0, 3135);
-  delay(1000);
+  delay(500);
   
   ledcDetachPin(BUZZER);
   
@@ -279,17 +279,20 @@ String daysToString(String days[7]) {
 }
 
 void setClock() {
-  // should be 3600 for DST!
   configTime(0, 0, "europe.pool.ntp.org", "pool.ntp.org", "time.nist.gov");
-  Serial.print(F("Waiting for NTP time sync: "));
+  
+  setenv("TZ", "WET0WEST,M3.5.0/1,M10.5.0", 1);
+  tzset();
+
+  //Serial.print(F("Waiting for NTP time sync: "));
   time_t nowSecs = time(nullptr);
   while (nowSecs < 8 * 3600 * 2) {
     delay(500);
-    Serial.print(F("."));
+    //Serial.print(F("."));
     yield();
     nowSecs = time(nullptr);
   }
-   //Serial.println(F("\nDone! "));
+  //Serial.println(F("\nDone! "));
   getLocalTime(&timeinfo);
 }
 
@@ -325,13 +328,14 @@ void readEeprom() {
   alarmDays =  EEPROM.readString(5).substring(0,7); //address to 11
   brightness = EEPROM.readInt(12);
 
+/*
   Serial.print("Stored alarm: ");
   Serial.println(alarmTime);
   Serial.print("Stored alarm days: ");
   Serial.println(alarmDays);
   Serial.print("Stored brightness: ");
   Serial.println(brightness);  
-  
+*/
 }
 
 void showIp() {
@@ -341,7 +345,8 @@ void showIp() {
   String m = ipToString();
   m.toCharArray(newMessage, m.length() + 1);  
   P.displayText(newMessage, PA_CENTER, 150, 2000 , PA_SCROLL_LEFT, PA_SCROLL_LEFT);    
-  waitForIt();  
+  waitForIt();
+  //Serial.println("Show IP done.");
 }
 
 
